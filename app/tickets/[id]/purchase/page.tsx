@@ -88,7 +88,7 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
           </SheetTrigger>
           <SheetContent side="bottom" className="bg-zinc-950 border-zinc-800 rounded-t-[32px] p-6 h-auto">
             <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-zinc-700" />
-            <h2 className="text-xl font-bold mb-4 text-center">Escanea para pagar</h2>
+            <h2 className="text-xl font-bold mb-4 text-center text-red-500">Escanea para pagar</h2>
             <PaymentQR />
           </SheetContent>
         </Sheet>
