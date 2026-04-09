@@ -94,7 +94,7 @@ export function ChatBox({
           </p>
         </> : null}
 
-      <div className="mb-3 h-72 space-y-2 overflow-y-auto rounded-2xl border border-zinc-800 p-3 text-sm">
+      <div className="mb-3 h-72 space-y-2 overflow-y-auto rounded-2xl border border-dashed border-zinc-800 p-3 text-sm">
         {messages.map((m) => {
           const tag = senderTag(m, ticketBuyerId, ticketSellerId);
           const isSelf = !m.isSystem && currentUserId && m.sender.id === currentUserId;

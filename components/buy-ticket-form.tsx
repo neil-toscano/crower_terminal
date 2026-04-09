@@ -20,7 +20,7 @@ export function BuyTicketForm({ ticketId, status }: { ticketId: string; status: 
         disabled={!available}
         className="rounded-xl cursor-pointer bg-white px-3 py-2 text-xs text-black disabled:opacity-40"
       >
-        BUY
+        ADQUIRIR
       </button>
     </form>
   );

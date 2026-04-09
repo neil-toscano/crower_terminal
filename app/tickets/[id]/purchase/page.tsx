@@ -8,6 +8,12 @@ import { FinalizePurchaseForm } from "@/components/ticket-buy-actions";
 import { auth } from "@/lib/auth";
 
 import { BackButton } from "@/components/button-back/button-back";
+import { PaymentQR } from "./ui/payment-qr";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Payment01FreeIcons } from '@hugeicons/core-free-icons'
+
 
 export default async function TicketPurchasePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -42,29 +48,8 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-4">
-            <div className="flex justify-center mb-4">
-              <h3 className="inline-block text-[11px] uppercase tracking-wider font-bold text-[#5C00B2] bg-zinc-200 px-3 py-1 rounded-full shadow-sm">
-                Pago seguro - QR YAPE
-              </h3>
-            </div>
-            <div className="rounded-2xl border-none p-4">
-              <div className="aspect-square rounded-xl border border-dashed border-zinc-600 bg-zinc-950 text-center text-xs text-zinc-500">
-                <img
-                  src="https://res.cloudinary.com/dvult5ws1/image/upload/v1775701107/qrcode_localhost_dgyc89.png"
-                  alt="QR YAPE"
-                  className="h-full w-full object-contain rounded-xl"
-                />
-              </div>
-            </div>
-            <p className="mt-3 text-md text-zinc-400 mb-6">
-              *Paga el monto acordado con tu comprador y usa el chat para coordinar con el admin.
-            </p>
-            {ticket.status === TicketStatus.IN_PROGRESS && (
-              <div className="flex justify-center">
-                <FinalizePurchaseForm ticketId={ticket.id} />
-              </div>
-            )}
+          <aside className="hidden md:block">
+            <PaymentQR />
           </aside>
 
           <div>
@@ -80,8 +65,32 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
             />
           </div>
         </div>
+        {ticket.status === TicketStatus.IN_PROGRESS && (
+          <div className="flex justify-center">
+            <FinalizePurchaseForm ticketId={ticket.id} />
+          </div>
+        )}
 
 
+      </div>
+      <div className="fixed bottom-6 right-6 md:hidden z-50">
+        <Sheet>
+          <SheetTrigger asChild>
+            <button className="flex h-14 w-14 items-center justify-center rounded-full bg-[#5C00B2] text-white shadow-lg shadow-purple-900/20 hover:scale-105 transition-transform active:scale-95">
+              <HugeiconsIcon
+                icon={Payment01FreeIcons}
+                size={24}
+                color="currentColor"
+                strokeWidth={1.5}
+              />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="bg-zinc-950 border-zinc-800 rounded-t-[32px] p-6 h-auto">
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-zinc-700" />
+            <h2 className="text-xl font-bold mb-4 text-center">Escanea para pagar</h2>
+            <PaymentQR />
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   );
