@@ -8,7 +8,6 @@ import { ticketMediatePath, ticketPurchasePath, ticketSellerChatPath } from "@/l
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft } from "@hugeicons/core-free-icons";
 import { TicketStatusES } from "@/const";
-import { BackButton } from "@/components/button-back/button-back";
 
 export default async function TicketPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -24,7 +23,14 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
   return (
     <div className="px-2 py-2 text-white">
       <div className="mx-auto max-w-6xl space-y-4">
-        <BackButton label="Volver" />
+        <Link
+          href="/"
+          className="inline-flex items-center px-3 py-1 rounded-md bg-zinc-700/30 text-zinc-200 hover:bg-zinc-700/50 transition-colors"
+          aria-label="Volver al detalle"
+        >
+          <HugeiconsIcon icon={ArrowLeft} className="h-6 w-6 mr-2" />
+          <span>Volver</span>
+        </Link>
 
         <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-5">
           <div className="text-sm text-zinc-400">
