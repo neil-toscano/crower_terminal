@@ -37,7 +37,7 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
   const buyerMessages = ticket.messages.filter((m) => m.thread === MessageThread.BUYER_SIDE) as ChatMessageItem[];
 
   return (
-    <div className="px-2 py-2 text-white">
+    <div className="px-2 py-2 text-white mb-10">
       <div className="mx-auto max-w-6xl space-y-4">
         <BackButton label="Volver" />
 
@@ -76,13 +76,14 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
       <div className="fixed bottom-6 right-6 md:hidden z-50">
         <Sheet>
           <SheetTrigger asChild>
-            <button className="flex h-14 w-14 items-center justify-center rounded-full bg-[#5C00B2] text-white shadow-lg shadow-purple-900/20 hover:scale-105 transition-transform active:scale-95">
+            <button className="flex flex-col items-center justify-center h-20 w-14 rounded-full bg-[#5C00B2] text-white shadow-lg shadow-purple-900/20 hover:scale-105 transition-transform active:scale-95">
               <HugeiconsIcon
                 icon={Payment01FreeIcons}
-                size={24}
+                size={18}
                 color="currentColor"
                 strokeWidth={1.5}
               />
+              <span className="text-xs mt-1">Pagar</span>
             </button>
           </SheetTrigger>
           <SheetContent side="bottom" className="bg-zinc-950 border-zinc-800 rounded-t-[32px] p-6 h-auto">
