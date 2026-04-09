@@ -129,7 +129,7 @@ export async function createTicket(formData: FormData): Promise<ActionResult> {
 
 
 
-  const code = `#VAL-${Date.now().toString().slice(-5)}`;
+  const code = await generateSequentialCode();
 
 
 
@@ -339,3 +339,18 @@ export async function adminTicketAction(
 
 }
 
+async function generateSequentialCode() {
+  const last = await prisma.ticket.findFirst({
+    orderBy: { createdAt: "desc" },
+    select: { code: true },
+  });
+
+  let nextNumber = 1;
+
+  if (last?.code) {
+    const lastNumber = parseInt(last.code.replace("#VAL-", ""), 10);
+    nextNumber = lastNumber + 1;
+  }
+
+  return `#VAL-${String(nextNumber).padStart(5, "0")}`;
+}
