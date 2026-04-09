@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { getTicketById } from "@/actions/ticket/get-ticket-by-id";
@@ -8,8 +7,7 @@ import type { ChatMessageItem } from "@/components/chat-box";
 import { FinalizePurchaseForm } from "@/components/ticket-buy-actions";
 import { auth } from "@/lib/auth";
 
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeft } from "@hugeicons/core-free-icons";
+import { BackButton } from "@/components/button-back/button-back";
 
 export default async function TicketPurchasePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -35,14 +33,7 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
   return (
     <div className="px-2 py-2 text-white">
       <div className="mx-auto max-w-6xl space-y-4">
-        <Link
-          href={detailHref}
-          className="inline-flex items-center px-3 py-1 rounded-md bg-zinc-700/30 text-zinc-200 hover:bg-zinc-700/50 transition-colors"
-          aria-label="Volver al detalle"
-        >
-          <HugeiconsIcon icon={ArrowLeft} className="h-6 w-6 mr-2" />
-          <span>Volver</span>
-        </Link>
+        <BackButton label="Volver" />
 
         <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-5">
           <div className="text-sm text-zinc-400">{ticket.code}</div>
@@ -52,9 +43,11 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
 
         <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
           <aside className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-4">
-            <h3 className="mb-2 text-sm  text-center font-medium text-[#5C00B2] bg-zinc-300 px-2 py-1 rounded">
-              Pago seguro - QR YAPE
-            </h3>
+            <div className="flex justify-center mb-4">
+              <h3 className="inline-block text-[11px] uppercase tracking-wider font-bold text-[#5C00B2] bg-zinc-200 px-3 py-1 rounded-full shadow-sm">
+                Pago seguro - QR YAPE
+              </h3>
+            </div>
             <div className="rounded-2xl border-none p-4">
               <div className="aspect-square rounded-xl border border-dashed border-zinc-600 bg-zinc-950 text-center text-xs text-zinc-500">
                 <img
@@ -67,7 +60,11 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
             <p className="mt-3 text-md text-zinc-400 mb-6">
               *Paga el monto acordado con tu comprador y usa el chat para coordinar con el admin.
             </p>
-            {ticket.status === TicketStatus.IN_PROGRESS && <FinalizePurchaseForm ticketId={ticket.id} />}
+            {ticket.status === TicketStatus.IN_PROGRESS && (
+              <div className="flex justify-center">
+                <FinalizePurchaseForm ticketId={ticket.id} />
+              </div>
+            )}
           </aside>
 
           <div>

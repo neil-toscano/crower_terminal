@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 const userNavLinks: { href: string; label: string }[] = [
   { href: "/sell/new", label: "Publicar aviso" },
   { href: "/my/purchases", label: "Mis compras" },
-  { href: "/my/sales", label: "Mis ventas" },
+  { href: "/my/sales", label: "Ver mis publicaciones" },
 ];
 
 function NavLink({

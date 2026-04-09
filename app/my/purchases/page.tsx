@@ -25,7 +25,7 @@ export default async function MyPurchasesPage() {
               href={ticketPurchasePath(ticket.id)}
               className="rounded-xl border border-zinc-700 px-3 py-2 text-xs"
             >
-              Ver chat
+              Chat
             </Link>
           </div>
         ))}
