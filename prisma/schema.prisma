@@ -13,30 +13,31 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  name         String?
-  image        String?
-  role         Role      @default(USER)
-  createdAt    DateTime  @default(now())
-  ticketsSold  Ticket[]  @relation("SellerTickets")
-  ticketsBought Ticket[] @relation("BuyerTickets")
-  messages     Message[]
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  ticketsSold   Ticket[]  @relation("SellerTickets")
+  ticketsBought Ticket[]  @relation("BuyerTickets")
+  messages      Message[]
 }
 
 model Ticket {
-  id        String       @id @default(cuid())
-  code      String       @unique
-  title     String
+  id          String       @id @default(cuid())
+  code        String       @unique
+  title       String
   sellerPhone String?
-  status    TicketStatus @default(AVAILABLE)
-  sellerId  String
-  buyerId   String?
-  seller    User         @relation("SellerTickets", fields: [sellerId], references: [id])
-  buyer     User?        @relation("BuyerTickets", fields: [buyerId], references: [id])
-  messages  Message[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  description String?
+  status      TicketStatus @default(AVAILABLE)
+  sellerId    String
+  buyerId     String?
+  seller      User         @relation("SellerTickets", fields: [sellerId], references: [id])
+  buyer       User?        @relation("BuyerTickets", fields: [buyerId], references: [id])
+  messages    Message[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 /// Comprador ↔ admin (pago, escrow). Vendedor ↔ admin en SELLER_SIDE.
@@ -46,15 +47,15 @@ enum MessageThread {
 }
 
 model Message {
-  id        String         @id @default(cuid())
+  id        String        @id @default(cuid())
   text      String
-  isSystem  Boolean        @default(false)
-  thread    MessageThread  @default(BUYER_SIDE)
+  isSystem  Boolean       @default(false)
+  thread    MessageThread @default(BUYER_SIDE)
   senderId  String
   ticketId  String
-  sender    User           @relation(fields: [senderId], references: [id])
-  ticket    Ticket         @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  createdAt DateTime       @default(now())
+  sender    User          @relation(fields: [senderId], references: [id])
+  ticket    Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
 }
 
 enum TicketStatus {

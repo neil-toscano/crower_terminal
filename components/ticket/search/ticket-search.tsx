@@ -29,7 +29,7 @@ export default function TicketSearch({ tickets }: any) {
                 <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Buscar (#A51 o nombre)"
+                    placeholder="Buscar por código (#VAL-001) o nombre.."
                     className="w-full border-2 rounded-xl bg-zinc-900/60 px-4 py-2.5 pr-10 text-sm text-zinc-200 placeholder:text-zinc-500 outline-none focus:ring-1 focus:ring-zinc-600 transition-all"
                 />
 

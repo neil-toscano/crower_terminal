@@ -119,32 +119,32 @@ export async function createTicket(formData: FormData): Promise<ActionResult> {
 
   const title = String(formData.get("title") ?? "").trim();
 
-  const sellerPhone = String(formData.get("sellerPhone") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
 
 
 
-  if (title.length < 4) return { ok: false, error: "El título es demasiado corto (mín. 4 caracteres)." };
+  if (title.length < 4) {
+    return { ok: false, error: "El título es demasiado corto (mín. 4 caracteres)." };
+  }
 
-  if (sellerPhone.length < 7) return { ok: false, error: "El número de celular no es válido." };
+  if (title.length > 100) {
+    return { ok: false, error: "El título no puede superar los 100 caracteres." };
+  }
 
+  if (description.length > 120) {
+    return { ok: false, error: "La descripción no puede superar los 120 caracteres." };
+  }
 
 
   const code = await generateSequentialCode();
 
-
-
   const ticket = await prisma.ticket.create({
 
     data: {
-
       code,
-
       title,
-
-      sellerPhone,
-
+      description: description || "",
       sellerId: user.id,
-
       status: TicketStatus.AVAILABLE,
 
     },

@@ -12,7 +12,7 @@ export default async function Page() {
             Marketplace
           </h2>
           <p className="text-sm text-zinc-400 mt-1">
-            Acordaron en Facebook? Cierra el trato aquí sin riesgo de estafa.
+            Acordaron en Facebook...etc? Cierra el trato aquí sin riesgo de estafa.
           </p>
         </header>
 

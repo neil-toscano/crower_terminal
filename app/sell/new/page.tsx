@@ -9,8 +9,8 @@ export default async function NewTicketPage() {
 
   return (
     <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-6 backdrop-blur">
-      <h2 className="mb-2 text-2xl font-semibold">Publicar ticket vendedor</h2>
-      <p className="mb-6 text-sm text-zinc-400">Describe la cuenta que venderas. El precio se coordina por chat.</p>
+      <h2 className="mb-2 text-2xl font-semibold">Describe la cuenta que venderas</h2>
+      <p className="mb-6 text-sm text-zinc-400">Ej: Cuenta Valorant con skins / cuenta Free Fire nivel alto</p>
 
       <SellTicketForm />
     </div>

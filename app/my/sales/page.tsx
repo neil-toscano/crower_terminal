@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getTicketsBySellerId } from "@/actions/ticket/get-tickets-by-seller-id";
 import { auth } from "@/lib/auth";
 import { ticketSellerChatPath } from "@/lib/ticket-routes";
+import { ChatLink } from "./ui/chat-link";
 
 export default async function MySalesPage() {
   const session = await auth();
@@ -23,15 +23,8 @@ export default async function MySalesPage() {
               <p className="text-xs text-zinc-500">Estado: {ticket.status}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link href={`/tickets/${ticket.id}`} className="rounded-xl border border-zinc-700 px-3 py-2 text-xs">
-                Ver detalle
-              </Link>
-              <Link
-                href={ticketSellerChatPath(ticket.id)}
-                className="rounded-xl border border-amber-600/40 bg-amber-950/25 px-3 py-2 text-xs text-amber-100"
-              >
-                Chat
-              </Link>
+              <ChatLink href={`/tickets/${ticket.id}`} label="Ver detalle" variant="default" />
+              <ChatLink href={ticketSellerChatPath(ticket.id)} variant="amber" />
             </div>
           </div>
         ))}
