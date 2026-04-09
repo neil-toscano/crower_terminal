@@ -50,7 +50,18 @@ export default function TicketSearch({ tickets }: any) {
                         key={ticket.id}
                         className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-4 backdrop-blur"
                     >
-                        <div className="mb-2 text-sm text-zinc-400">{ticket.code}</div>
+                        <div className="mb-2 flex items-center justify-between text-sm text-zinc-400">
+                            <span>{ticket.code}</span>
+                            <span className="text-xs text-zinc-500">
+                                {new Date(ticket.createdAt).toLocaleString("es-PE", {
+                                    year: "numeric",
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                })}
+                            </span>
+                        </div>
                         <div className="mb-3 text-lg font-medium">{ticket.title}</div>
                         <span className={`rounded-full px-3 py-1 text-xs ${badgeClass(ticket.status)}`}>
                             {ticket.status}
