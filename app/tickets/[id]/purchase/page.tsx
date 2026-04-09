@@ -9,7 +9,7 @@ import { auth } from "@/lib/auth";
 
 import { BackButton } from "@/components/button-back/button-back";
 import { PaymentQR } from "./ui/payment-qr";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Payment01FreeIcons } from '@hugeicons/core-free-icons'
@@ -86,9 +86,18 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
               <span className="text-xs mt-1">Pagar</span>
             </button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="bg-zinc-950 border-zinc-800 rounded-t-[32px] p-6 h-auto">
-            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-zinc-700" />
-            <h2 className="text-xl font-bold mb-4 text-center text-red-500">Escanea para pagar</h2>
+          <SheetContent showCloseButton={false} side="bottom" className="bg-zinc-950 border-zinc-800 rounded-t-[32px] p-6 h-auto">
+            <div className="relative flex items-center justify-center mb-4">
+              <div className="h-1.5 w-12 rounded-full bg-zinc-700" />
+
+              <SheetClose asChild>
+                <button className="absolute right-0 text-white text-xl p-2">
+                  ✕
+                </button>
+              </SheetClose>
+            </div>
+
+            <h2 className="text-xl font-bold mb-4 text-center text-white">Escanea para pagar</h2>
             <PaymentQR />
           </SheetContent>
         </Sheet>
