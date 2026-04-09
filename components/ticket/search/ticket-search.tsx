@@ -25,7 +25,7 @@ export default function TicketSearch({ tickets }: any) {
     return (
         <>
             {/* SEARCH */}
-            <div className="mb-8 mt-8 relative w-80">
+            <div className="mb-8 mt-8 relative w-full max-w-sm">
                 <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}

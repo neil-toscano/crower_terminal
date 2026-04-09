@@ -9,10 +9,10 @@ export default async function Page() {
       <div className="mx-auto w-full max-w-6xl">
         <header className="mb-4">
           <h2 className="text-xl font-semibold text-zinc-100">
-            Marketplace de Tickets
+            Marketplace
           </h2>
           <p className="text-sm text-zinc-400 mt-1">
-            Compra segura por código. Sin precios públicos.
+            Acordaron en Facebook? Cierra el trato aquí sin riesgo de estafa.
           </p>
         </header>
 
