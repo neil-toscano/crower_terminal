@@ -104,8 +104,9 @@ export async function buyTicket(ticketId: string, formData: FormData): Promise<A
 
   revalidateTicketViews(ticketId);
 
-  return redirect(ticketPurchasePath(ticketId));
+  // return redirect(ticketPurchasePath(ticketId));
 
+  return { ok: true }; // Devuelve éxito
 }
 
 
