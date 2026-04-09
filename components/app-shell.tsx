@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 import { Button } from "@/components/ui/button";
 
 const userNavLinks: { href: string; label: string }[] = [
-  { href: "/sell/new", label: "Publicar ticket" },
+  { href: "/sell/new", label: "Publicar aviso" },
   { href: "/my/purchases", label: "Mis compras" },
   { href: "/my/sales", label: "Mis ventas" },
 ];
@@ -222,6 +222,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 showCloseButton={false}
                 className="left-0 top-0 h-dvh w-[86vw] max-w-[320px] translate-x-0 translate-y-0 rounded-none border-r border-white/[0.1] bg-zinc-950 p-4 text-zinc-100 ring-0 data-open:zoom-in-100 data-closed:zoom-out-100 md:hidden"
               >
+                <button
+                  type="button"
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="absolute mt-1 mr-1 right-4 top-4 z-20 rounded-lg bg-zinc-800/70 px-3 py-1 text-lg font-bold text-zinc-200 hover:bg-zinc-800/90"
+                  aria-label="Cerrar menú lateral"
+                >
+                  X
+                </button>
                 <DialogTitle className="sr-only">Menú de navegación</DialogTitle>
                 <aside className="flex h-full min-h-0 flex-col rounded-2xl border border-white/[0.07] bg-zinc-950/75 p-4 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.65)] ring-1 ring-white/[0.04] backdrop-blur-xl">
                   <SidebarContent session={session} pathname={pathname} onNavigate={() => setMobileSidebarOpen(false)} />
