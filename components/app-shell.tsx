@@ -81,6 +81,7 @@ function SidebarContent({
 }) {
   const isAdmin = session?.user?.role === Role.ADMIN;
   const marketplaceActive = pathname === "/";
+  const loungeActive = pathname === "/lounge";
 
   return (
     <>
@@ -93,6 +94,18 @@ function SidebarContent({
 
       <nav className="space-y-1.5">
         <NavLink href="/" label="Marketplace" active={marketplaceActive} onClick={onNavigate} />
+        <div className="relative">
+          <NavLink
+            href="/lounge"
+            label="Chat general"
+            active={loungeActive}
+            onClick={onNavigate}
+          />
+
+          <span className="absolute top-1 right-2 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] text-white">
+            1
+          </span>
+        </div>
       </nav>
 
       <div className="my-5 flex flex-col items-center">
