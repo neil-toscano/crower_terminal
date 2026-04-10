@@ -18,6 +18,7 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
   const { id } = await params;
   const session = await auth();
   const ticket = await getTicketById(id);
+  console.log(ticket, 'ticket');
 
   if (!ticket) notFound();
 

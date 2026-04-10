@@ -13,7 +13,7 @@ export type ChatMessageItem = {
   createdAt: Date;
   isSystem: boolean;
   thread: MessageThread;
-  sender: { id: string; name: string | null; email: string; role: Role };
+  sender: { id: string; name: string | null; role: Role };
 };
 
 function senderLabelClass(
@@ -101,7 +101,7 @@ export function ChatBox({
           return (
             <div key={m.id} className={m.isSystem ? "text-zinc-400" : "text-zinc-100"}>
               <span className={`mr-2 text-xs font-medium ${senderLabelClass(m, ticketBuyerId, ticketSellerId)}`}>
-                {m.sender.name ?? m.sender.email}
+                {m.sender.name ?? m.sender.id}
                 {tag && <span className="ml-1.5 font-normal text-zinc-500">({tag})</span>}
                 {isSelf && <span className="ml-1 text-zinc-600">· tú</span>}
               </span>

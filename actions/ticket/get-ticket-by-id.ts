@@ -8,9 +8,26 @@ export async function getTicketById(id: string) {
     include: {
       messages: {
         orderBy: { createdAt: "asc" },
-        include: { sender: true },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              role: true,
+            }
+          }
+        },
       },
-      seller: true,
+      // seller: true,
+      seller: {
+        select: {
+          id: true,
+          role: true,
+          name: true,
+          image: true,
+        }
+      },
       buyer: true,
     },
   });

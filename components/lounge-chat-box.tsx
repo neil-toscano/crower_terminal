@@ -12,7 +12,7 @@ export type LoungeMessageItem = {
   id: string;
   text: string;
   createdAt: Date | string;
-  sender: { id: string; name: string | null; email: string; role: Role };
+  sender: { id: string; name: string | null; role: Role };
 };
 
 export function LoungeChatBox({
@@ -76,7 +76,7 @@ export function LoungeChatBox({
               <div key={m.id} className="text-zinc-100">
                 <span className={`mr-2 inline-block ${labelClass}`}>
                   <span className="block text-xs font-medium">
-                    {m.sender.name ?? m.sender.email}
+                    {m.sender.name ?? m.sender.id}
                     {isSelf && <span className="ml-1 text-zinc-600">· tú</span>}
                   </span>
                   <span className="block text-[10px] text-zinc-500 -mt-0.5">

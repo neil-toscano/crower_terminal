@@ -10,7 +10,7 @@ export default async function LoungePage() {
     orderBy: { createdAt: "asc" },
     take: 200,
     include: {
-      sender: { select: { id: true, name: true, email: true, role: true } },
+      sender: { select: { id: true, name: true, role: true } },
     },
   });
 

@@ -63,7 +63,7 @@ export function UnreadChatsMenu() {
 
         <MenubarContent
           align="end"
-          className="max-h-[min(70vh,24rem)] min-w-[240px] max-w-[min(92vw,20rem)] overflow-y-auto border border-white/[0.08] bg-black/90 p-1 text-zinc-100 shadow-xl ring-1 ring-white/[0.06] backdrop-blur-xl"
+          className="ml-2 max-h-[min(70vh,24rem)] min-w-[240px] max-w-[min(92vw,20rem)] overflow-y-auto border border-white/[0.08] bg-black/90 p-1 text-zinc-100 shadow-xl ring-1 ring-white/[0.06] backdrop-blur-xl"
         >
           <MenubarLabel className="text-xs font-medium uppercase tracking-wide text-zinc-500">
             Chats con mensajes nuevos
