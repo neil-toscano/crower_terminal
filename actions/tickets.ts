@@ -19,7 +19,7 @@ import { revalidatePath } from "next/cache";
 
 import { redirect } from "next/navigation";
 
-const CREATE_TICKET_RATE_LIMIT_MAX_HITS = 3;
+const CREATE_TICKET_RATE_LIMIT_MAX_HITS = 15; //3
 const CREATE_TICKET_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 
 
