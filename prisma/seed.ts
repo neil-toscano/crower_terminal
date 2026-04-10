@@ -1,102 +1,52 @@
-import { PrismaClient, Role, TicketStatus } from "../app/generated/prisma/client";
+import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
+import { seedUsers1 } from "./seed-data/seedUsers1";
+import { seedUsers2 } from "./seed-data/seedUsers2";
+import { seedTickets1 } from "./seed-data/seedTickets1";
+import { seedTickets2 } from "./seed-data/seedTickets2";
+import { seedLoungeMessages } from "./seed-data/seedLoungeMessages";
+
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
 
-const prisma = new PrismaClient({
-  adapter,
-});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  // Admin fijo
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@escrow.local" },
-    update: { role: Role.ADMIN },
-    create: {
-      email: "admin@escrow.local",
-      name: "Escrow Admin",
-      role: Role.ADMIN,
-    },
-  });
+  console.log("🌱 Starting seed...\n");
 
-  console.log("Admin created:", admin.email);
+  // ── 1. Users ──────────────────────────────────────────────────────────────
+  console.log("👤 Seeding users (batch 1)...");
+  const users1 = await seedUsers1(prisma);
 
-  // --- BORRAR datos antiguos de los 4 sellers ---
-  const sellerEmails = ["seller1@escrow.local", "seller2@escrow.local", "seller3@escrow.local", "seller4@escrow.local"];
+  console.log("👤 Seeding users (batch 2)...");
+  const users2 = await seedUsers2(prisma);
 
-  // Borrar tickets de esos sellers primero
-  await prisma.ticket.deleteMany({
-    where: {
-      seller: { email: { in: sellerEmails } }
-    }
-  });
+  // Merge both user maps
+  const allUsers = { ...users1, ...users2 };
 
-  // Borrar los usuarios vendedores antiguos
-  await prisma.user.deleteMany({
-    where: {
-      email: { in: sellerEmails }
-    }
-  });
+  // ── 2. Tickets ────────────────────────────────────────────────────────────
+  console.log("\n🎫 Seeding tickets (batch 1 - Mar 2–12)...");
+  await seedTickets1(prisma, allUsers);
 
-  console.log("Old sellers and their tickets deleted");
+  console.log("🎫 Seeding tickets (batch 2 - Mar 13–Apr 3)...");
+  await seedTickets2(prisma, allUsers);
 
-  // Crear 4 vendedores nuevos
-  const sellers: { id: string; email: string }[] = [];
-  for (let i = 1; i <= 4; i++) {
-    const email = `seller${i}@escrow.local`;
-    const seller = await prisma.user.upsert({
-      where: { email },
-      update: {},
-      create: {
-        email,
-        name: `Seller ${i}`,
-        role: Role.USER,
-      },
-    });
-    sellers.push(seller);
-  }
+  // ── 3. Lounge chat ────────────────────────────────────────────────────────
+  console.log("\n💬 Seeding lounge messages...");
+  await seedLoungeMessages(prisma, allUsers);
 
-  console.log("4 new sellers created");
-
-  // Lista de juegos variados
-  const games = [
-    "Valorant", "Free Fire", "League of Legends", "Minecraft",
-    "Fortnite", "CS:GO", "Apex Legends", "PUBG", "GTA V", "FIFA 23"
-  ];
-
-  function getRandomGame() {
-    return games[Math.floor(Math.random() * games.length)];
-  }
-
-  // Crear 10 tickets para cada vendedor
-  let ticketCounter = 1;
-  for (const seller of sellers) {
-    for (let j = 1; j <= 10; j++) {
-      const game = getRandomGame();
-      const code = `#T${ticketCounter.toString().padStart(3, "0")}`;
-      await prisma.ticket.upsert({
-        where: { code },
-        update: {},
-        create: {
-          code,
-          title: `${game} Account ${ticketCounter}`,
-          sellerId: seller.id,
-          status: TicketStatus.AVAILABLE,
-        },
-      });
-      ticketCounter++;
-    }
-  }
-
-  console.log("10 tickets created for each seller with different games");
+  console.log("\n✅ All seed complete!");
+  console.log(`   Users:    ${Object.keys(allUsers).length}`);
+  console.log(`   Tickets:  125 (aprox)`);
+  console.log(`   Lounge:   ~120 messages`);
 }
 
 main()
   .catch((error) => {
-    console.error(error);
+    console.error("❌ Seed failed:", error);
     process.exit(1);
   })
   .finally(async () => {
