@@ -57,10 +57,10 @@ export function FinalizePurchaseForm({ ticketId }: { ticketId: string }) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="bg-zinc-200">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Confirmar finalización</DialogTitle>
-          <DialogDescription className="text-base text-gray-700 mt-1">
+          <DialogDescription className="text-base mt-1">
             ¿Confirmas que todo está correcto y la compra puede darse por finalizada?
           </DialogDescription>
         </DialogHeader>
