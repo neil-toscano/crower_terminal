@@ -5,6 +5,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { Role } from "@/app/generated/prisma/enums";
 import { Button } from "@/components/ui/button";
+import { UnreadChatsMenu } from "@/components/unread-chats-menu";
 
 import {
   Menubar,
@@ -40,6 +41,7 @@ export function AuthButtons() {
 
   return (
     <div className="flex items-center gap-3 ml-auto">
+      <UnreadChatsMenu />
       {/* MENUBAR */}
       <Menubar className="border-none bg-transparent p-0">
         <MenubarMenu>

@@ -9,8 +9,18 @@ import type { ChatMessageItem } from "@/components/chat-box";
 import { auth } from "@/lib/auth";
 import { ticketMediatePath } from "@/lib/ticket-routes";
 
-export default async function TicketMediatePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TicketMediatePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ thread?: string }>;
+}) {
   const { id } = await params;
+  const sp = await searchParams;
+  const threadQ = sp.thread;
+  const initialThread: "buyer" | "seller" | null =
+    threadQ === "seller" ? "seller" : threadQ === "buyer" ? "buyer" : null;
   const session = await auth();
   const ticket = await getTicketById(id);
 
@@ -69,6 +79,7 @@ export default async function TicketMediatePage({ params }: { params: Promise<{ 
           ticketSellerId={ticket.sellerId}
           currentUserId={session?.user?.id ?? null}
           buyerLabel={buyerLabel}
+          initialThread={initialThread}
         />
 
         <AdminTicketActions ticketId={ticket.id} />

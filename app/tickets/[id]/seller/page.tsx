@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { getTicketById } from "@/actions/ticket/get-ticket-by-id";
+import { markTicketThreadRead } from "@/actions/ticket-read";
 import { MessageThread, TicketStatus } from "@/app/generated/prisma/enums";
 import { ChatBox, type ChatMessageItem } from "@/components/chat-box";
 import { auth } from "@/lib/auth";
@@ -30,6 +31,8 @@ export default async function TicketSellerChatPage({ params }: { params: Promise
 
   const readOnly = ticket.status === TicketStatus.COMPLETED;
   const sellerMessages = ticket.messages.filter((m) => m.thread === MessageThread.SELLER_SIDE) as ChatMessageItem[];
+
+  await markTicketThreadRead(ticket.id, MessageThread.SELLER_SIDE);
 
   return (
     <div className="px-2 py-2 text-white">

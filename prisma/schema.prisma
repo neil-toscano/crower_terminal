@@ -13,32 +13,48 @@ datasource db {
 }
 
 model User {
-  id             String         @id @default(cuid())
-  email          String         @unique
-  name           String?
-  image          String?
-  role           Role           @default(USER)
-  createdAt      DateTime       @default(now())
-  ticketsSold    Ticket[]       @relation("SellerTickets")
-  ticketsBought  Ticket[]       @relation("BuyerTickets")
-  messages       Message[]
-  loungeMessages LoungeMessage[]
+  id                String                  @id @default(cuid())
+  email             String                  @unique
+  name              String?
+  image             String?
+  role              Role                    @default(USER)
+  createdAt         DateTime                @default(now())
+  ticketsSold       Ticket[]                @relation("SellerTickets")
+  ticketsBought     Ticket[]                @relation("BuyerTickets")
+  messages          Message[]
+  loungeMessages    LoungeMessage[]
+  ticketThreadReads TicketThreadReadState[]
 }
 
 model Ticket {
-  id          String       @id @default(cuid())
-  code        String       @unique
-  title       String
-  sellerPhone String?
-  description String?
-  status      TicketStatus @default(AVAILABLE)
-  sellerId    String
-  buyerId     String?
-  seller      User         @relation("SellerTickets", fields: [sellerId], references: [id])
-  buyer       User?        @relation("BuyerTickets", fields: [buyerId], references: [id])
-  messages    Message[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                String                  @id @default(cuid())
+  code              String                  @unique
+  title             String
+  sellerPhone       String?
+  description       String?
+  status            TicketStatus            @default(AVAILABLE)
+  sellerId          String
+  buyerId           String?
+  seller            User                    @relation("SellerTickets", fields: [sellerId], references: [id])
+  buyer             User?                   @relation("BuyerTickets", fields: [buyerId], references: [id])
+  messages          Message[]
+  threadReadStates  TicketThreadReadState[]
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+}
+
+/// Última lectura por usuario e hilo (comprador / vendedor) en un ticket. No aplica al chat general (lounge).
+model TicketThreadReadState {
+  id         String        @id @default(cuid())
+  userId     String
+  ticketId   String
+  thread     MessageThread
+  lastReadAt DateTime
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticket     Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ticketId, thread])
+  @@index([userId])
 }
 
 /// Comprador ↔ admin (pago, escrow). Vendedor ↔ admin en SELLER_SIDE.

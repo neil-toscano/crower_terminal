@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { markTicketThreadRead } from "@/actions/ticket-read";
 import { ChatBox, type ChatMessageItem } from "@/components/chat-box";
 import { MessageThread } from "@/app/generated/prisma/enums";
 
@@ -14,6 +15,7 @@ export function AdminMediateChats({
   ticketSellerId,
   currentUserId,
   buyerLabel,
+  initialThread,
 }: {
   ticketId: string;
   buyerMessages: ChatMessageItem[];
@@ -23,9 +25,19 @@ export function AdminMediateChats({
   ticketSellerId: string;
   currentUserId: string | null;
   buyerLabel: string;
+  initialThread?: "buyer" | "seller" | null;
 }) {
   const hasBuyer = Boolean(ticketBuyerId);
-  const [tab, setTab] = useState<"buyer" | "seller">(hasBuyer ? "buyer" : "seller");
+  const [tab, setTab] = useState<"buyer" | "seller">(() => {
+    if (initialThread === "seller") return "seller";
+    if (initialThread === "buyer" && hasBuyer) return "buyer";
+    return hasBuyer ? "buyer" : "seller";
+  });
+
+  useEffect(() => {
+    const thread = tab === "buyer" ? MessageThread.BUYER_SIDE : MessageThread.SELLER_SIDE;
+    void markTicketThreadRead(ticketId, thread);
+  }, [ticketId, tab]);
 
   return (
     <div className="space-y-3">
