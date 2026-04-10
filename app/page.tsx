@@ -1,8 +1,8 @@
-import { getTickets } from "@/actions";
+import { getTicketsPage } from "@/actions";
 import TicketSearch from "@/components/ticket/search/ticket-search";
 
 export default async function Page() {
-  const tickets = await getTickets();
+  const { tickets, nextCursor } = await getTicketsPage();
 
   return (
     <div className="px-1 py-1 text-white">
@@ -16,7 +16,7 @@ export default async function Page() {
           </p>
         </header>
 
-        <TicketSearch tickets={tickets} />
+        <TicketSearch initialTickets={tickets} initialNextCursor={nextCursor} />
       </div>
     </div>
   );

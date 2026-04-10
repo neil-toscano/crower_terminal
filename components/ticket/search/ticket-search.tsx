@@ -1,31 +1,104 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
+import type { Ticket } from "@/app/generated/prisma/client";
+import { getTicketsPage } from "@/actions";
 import { TicketStatus } from "@/app/generated/prisma/enums";
 import { BuyTicketForm } from "@/components/buy-ticket-form";
 import { TicketStatusES } from "@/const";
 
 function badgeClass(status: TicketStatus) {
     if (status === TicketStatus.AVAILABLE) return "bg-emerald-500/20 text-emerald-300";
-    if (status === TicketStatus.IN_PROGRESS) return "bg-orange-500/20 text-orange-300 relative";  // Añadido `relative` para el punto
+    if (status === TicketStatus.IN_PROGRESS) return "bg-orange-500/20 text-orange-300 relative";
     return "bg-zinc-600/30 text-zinc-300";
 }
 
-export default function TicketSearch({ tickets }: any) {
-    const [search, setSearch] = useState("");
+type Props = {
+    initialTickets: Ticket[];
+    initialNextCursor: string | null;
+};
 
-    const filteredTickets = useMemo(() => {
-        return tickets.filter((ticket: any) =>
-            ticket.code.toLowerCase().includes(search.toLowerCase()) ||
-            ticket.title.toLowerCase().includes(search.toLowerCase())
+export default function TicketSearch({ initialTickets, initialNextCursor }: Props) {
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
+    const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
+    const skipFirstEmptySearchEffect = useRef(true);
+
+    useEffect(() => {
+        const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
+        return () => clearTimeout(t);
+    }, [search]);
+
+    useEffect(() => {
+        if (skipFirstEmptySearchEffect.current && debouncedSearch === "") {
+            skipFirstEmptySearchEffect.current = false;
+            return;
+        }
+        skipFirstEmptySearchEffect.current = false;
+
+        let cancelled = false;
+        (async () => {
+            setRefreshing(true);
+            try {
+                const { tickets: rows, nextCursor: cursor } = await getTicketsPage({
+                    search: debouncedSearch || undefined,
+                });
+                if (!cancelled) {
+                    setTickets(rows);
+                    setNextCursor(cursor);
+                }
+            } finally {
+                if (!cancelled) setRefreshing(false);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [debouncedSearch]);
+
+    const loadMore = useCallback(async () => {
+        if (!nextCursor || loadingMore || refreshing) return;
+        setLoadingMore(true);
+        try {
+            const { tickets: rows, nextCursor: cursor } = await getTicketsPage({
+                cursorId: nextCursor,
+                search: debouncedSearch || undefined,
+            });
+            setTickets((prev) => [...prev, ...rows]);
+            setNextCursor(cursor);
+        } finally {
+            setLoadingMore(false);
+        }
+    }, [nextCursor, loadingMore, refreshing, debouncedSearch]);
+
+    const loadMoreRef = useRef(loadMore);
+    loadMoreRef.current = loadMore;
+
+    useEffect(() => {
+        const el = sentinelRef.current;
+        if (!el) return;
+
+        const obs = new IntersectionObserver(
+            (entries) => {
+                if (entries[0]?.isIntersecting) void loadMoreRef.current();
+            },
+            { root: null, rootMargin: "240px", threshold: 0 }
         );
-    }, [search, tickets]);
+
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, [debouncedSearch, nextCursor]);
 
     return (
         <>
-            {/* SEARCH */}
             <div className="mb-8 mt-8 relative w-full max-w-sm">
                 <input
                     value={search}
@@ -36,17 +109,17 @@ export default function TicketSearch({ tickets }: any) {
 
                 {search && (
                     <button
+                        type="button"
                         onClick={() => setSearch("")}
                         className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-1.5 py-0.5 text-xs text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
                     >
-                        ✕
+                        X
                     </button>
                 )}
             </div>
 
-            {/* LIST */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {filteredTickets.map((ticket: any) => (
+            <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 ${refreshing ? "opacity-60 pointer-events-none" : ""}`}>
+                {tickets.map((ticket) => (
                     <div
                         key={ticket.id}
                         className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-4 backdrop-blur"
@@ -83,6 +156,24 @@ export default function TicketSearch({ tickets }: any) {
                     </div>
                 ))}
             </div>
+
+            {refreshing && (
+                <p className="mt-6 text-center text-sm text-zinc-500">Actualizando resultados…</p>
+            )}
+
+            {!refreshing && tickets.length === 0 && (
+                <p className="mt-6 text-center text-sm text-zinc-400">No hay tickets que coincidan.</p>
+            )}
+
+            <div ref={sentinelRef} className="h-4 w-full shrink-0" aria-hidden />
+
+            {loadingMore && (
+                <p className="mt-4 text-center text-sm text-zinc-500">Cargando más…</p>
+            )}
+
+            {!nextCursor && !refreshing && tickets.length > 0 && (
+                <p className="mt-4 text-center text-xs text-zinc-600">No hay más publicaciones.</p>
+            )}
         </>
     );
 }
