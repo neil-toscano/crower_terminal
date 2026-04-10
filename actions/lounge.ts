@@ -4,8 +4,11 @@ import type { ActionResult } from "@/lib/action-result";
 import { requireSessionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 const MAX_LEN = 350;
+const LOUNGE_RATE_LIMIT_MAX_HITS = 6;
+const LOUNGE_RATE_LIMIT_WINDOW_MS = 10_000;
 
 export async function sendLoungeMessage(text: string): Promise<ActionResult> {
   const sessionUser = await requireSessionUser("/lounge");
@@ -21,6 +24,22 @@ export async function sendLoungeMessage(text: string): Promise<ActionResult> {
   if (!clean) return { ok: true };
   if (clean.length > MAX_LEN) {
     return { ok: false, error: `Máximo ${MAX_LEN} caracteres.` };
+  }
+
+  const rateLimit = await enforceRateLimit({
+    maxHits: LOUNGE_RATE_LIMIT_MAX_HITS,
+    windowMs: LOUNGE_RATE_LIMIT_WINDOW_MS,
+    countHitsSince: (since) =>
+      prisma.loungeMessage.count({
+        where: {
+          senderId: sessionUser.id,
+          createdAt: { gte: since },
+        },
+      }),
+    message: "Estás enviando mensajes muy rápido. Intenta nuevamente en unos segundos.",
+  });
+  if (!rateLimit.ok) {
+    return { ok: false, error: rateLimit.error };
   }
 
   const message = await prisma.loungeMessage.create({

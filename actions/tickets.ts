@@ -11,12 +11,16 @@ import { requireSessionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 import { pusherServer } from "@/lib/pusher";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 import { revalidateTicketViews, ticketMediatePath, ticketPurchasePath } from "@/lib/ticket-routes";
 
 import { revalidatePath } from "next/cache";
 
 import { redirect } from "next/navigation";
+
+const CREATE_TICKET_RATE_LIMIT_MAX_HITS = 3;
+const CREATE_TICKET_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 
 
 
@@ -149,6 +153,22 @@ export async function createTicket(formData: FormData): Promise<ActionResult> {
 
   if (description.length > 180) {
     return { ok: false, error: "La descripción no puede superar los 120 caracteres." };
+  }
+
+  const rateLimit = await enforceRateLimit({
+    maxHits: CREATE_TICKET_RATE_LIMIT_MAX_HITS,
+    windowMs: CREATE_TICKET_RATE_LIMIT_WINDOW_MS,
+    countHitsSince: (since) =>
+      prisma.ticket.count({
+        where: {
+          sellerId: user.id,
+          createdAt: { gte: since },
+        },
+      }),
+    message: "Has publicado demasiados tickets en poco tiempo. Espera unos minutos e inténtalo de nuevo.",
+  });
+  if (!rateLimit.ok) {
+    return { ok: false, error: rateLimit.error };
   }
 
 
