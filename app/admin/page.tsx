@@ -38,6 +38,14 @@ export default async function AdminPage() {
           </Link>
           .
         </p>
+        <div className="mt-4">
+          <Link
+            href="/admin/users"
+            className="inline-flex rounded-xl border border-zinc-700 px-3 py-2 text-xs hover:bg-zinc-800"
+          >
+            Gestionar usuarios
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/40">

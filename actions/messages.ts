@@ -13,12 +13,20 @@ export async function sendMessage(
   thread: MessageThread,
 ): Promise<ActionResult> {
   const user = await requireSessionUser(`/tickets/${ticketId}`);
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { isActive: true, isBlocked: true },
+  });
+  if (!dbUser || !dbUser.isActive || dbUser.isBlocked) {
+    return { ok: false, error: "Tu cuenta está bloqueada o desactivada." };
+  }
 
   const clean = text.trim();
   if (!clean) return { ok: true };
 
   const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
   if (!ticket) return { ok: false, error: "Ticket no encontrado." };
+  if (!ticket.isActive) return { ok: false, error: "Este ticket ya no está disponible." };
   if (ticket.status === TicketStatus.COMPLETED) return { ok: false, error: "El chat está cerrado." };
 
   const isAdmin = user.role === Role.ADMIN;

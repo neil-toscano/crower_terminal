@@ -124,7 +124,15 @@ function SidebarContent({
           {session?.user ? (
             <>
               {isAdmin && (
-                <NavLink href="/admin" label="Panel admin" active={pathname === "/admin"} onClick={onNavigate} />
+                <>
+                  <NavLink href="/admin" label="Panel admin" active={pathname === "/admin"} onClick={onNavigate} />
+                  <NavLink
+                    href="/admin/users"
+                    label="Gestionar usuarios"
+                    active={pathname === "/admin/users"}
+                    onClick={onNavigate}
+                  />
+                </>
               )}
               {userNavLinks.map((link) => (
                 <NavLink

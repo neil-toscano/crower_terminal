@@ -9,6 +9,13 @@ const MAX_LEN = 350;
 
 export async function sendLoungeMessage(text: string): Promise<ActionResult> {
   const sessionUser = await requireSessionUser("/lounge");
+  const dbUser = await prisma.user.findUnique({
+    where: { id: sessionUser.id },
+    select: { isActive: true, isBlocked: true },
+  });
+  if (!dbUser || !dbUser.isActive || dbUser.isBlocked) {
+    return { ok: false, error: "Tu cuenta está bloqueada o desactivada." };
+  }
 
   const clean = text.trim();
   if (!clean) return { ok: true };

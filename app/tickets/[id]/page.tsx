@@ -14,7 +14,7 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
   const session = await auth();
   const ticket = await getTicketById(id);
 
-  if (!ticket) notFound();
+  if (!ticket || !ticket.isActive || !ticket.seller.isActive || ticket.seller.isBlocked) notFound();
 
   const isBuyer = session?.user?.id === ticket.buyerId;
   const isSeller = session?.user?.id === ticket.sellerId;

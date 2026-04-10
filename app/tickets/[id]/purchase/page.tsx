@@ -20,7 +20,7 @@ export default async function TicketPurchasePage({ params }: { params: Promise<{
   const ticket = await getTicketById(id);
   console.log(ticket, 'ticket');
 
-  if (!ticket) notFound();
+  if (!ticket || !ticket.isActive || !ticket.seller.isActive || ticket.seller.isBlocked) notFound();
 
   const isBuyer = session?.user?.id === ticket.buyerId;
   const detailHref = `/tickets/${ticket.id}`;

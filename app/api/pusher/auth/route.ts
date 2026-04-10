@@ -9,6 +9,13 @@ export async function POST(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { isActive: true, isBlocked: true },
+  });
+  if (!dbUser || !dbUser.isActive || dbUser.isBlocked) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const body = await request.formData();
   const socketId = body.get("socket_id")?.toString();
@@ -21,6 +28,9 @@ export async function POST(request: Request) {
   const ticketId = channelName.replace("private-ticket-", "");
   const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
   if (!ticket) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (!ticket.isActive) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 

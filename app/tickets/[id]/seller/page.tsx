@@ -15,7 +15,7 @@ export default async function TicketSellerChatPage({ params }: { params: Promise
   const session = await auth();
   const ticket = await getTicketById(id);
 
-  if (!ticket) notFound();
+  if (!ticket || !ticket.isActive || !ticket.seller.isActive || ticket.seller.isBlocked) notFound();
 
   const detailHref = `/tickets/${ticket.id}`;
 

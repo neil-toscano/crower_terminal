@@ -18,6 +18,8 @@ model User {
   name              String?
   image             String?
   role              Role                    @default(USER)
+  isActive          Boolean                 @default(true)
+  isBlocked         Boolean                 @default(false)
   createdAt         DateTime                @default(now())
   ticketsSold       Ticket[]                @relation("SellerTickets")
   ticketsBought     Ticket[]                @relation("BuyerTickets")
@@ -33,6 +35,7 @@ model Ticket {
   sellerPhone       String?
   description       String?
   status            TicketStatus            @default(AVAILABLE)
+  isActive          Boolean                 @default(true)
   sellerId          String
   buyerId           String?
   seller            User                    @relation("SellerTickets", fields: [sellerId], references: [id])
@@ -67,6 +70,7 @@ model Message {
   id        String        @id @default(cuid())
   text      String
   isSystem  Boolean       @default(false)
+  isActive  Boolean       @default(true)
   thread    MessageThread @default(BUYER_SIDE)
   senderId  String
   ticketId  String
@@ -79,6 +83,7 @@ model Message {
 model LoungeMessage {
   id        String   @id @default(cuid())
   text      String
+  isActive  Boolean  @default(true)
   senderId  String
   sender    User     @relation(fields: [senderId], references: [id])
   createdAt DateTime @default(now())

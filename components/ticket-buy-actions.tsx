@@ -78,13 +78,14 @@ export function FinalizePurchaseForm({ ticketId }: { ticketId: string }) {
   );
 }
 
-type AdminAction = "validate" | "release" | "forceFinalize" | "closeChat";
+type AdminAction = "validate" | "release" | "forceFinalize" | "closeChat" | "deactivate";
 
 const adminLabels: Record<AdminAction, string> = {
   validate: "Validate Payment",
   release: "Release Ticket",
   forceFinalize: "Force Finalize",
   closeChat: "Close Chat",
+  deactivate: "Desactivar Ticket",
 };
 
 export function AdminTicketActions({ ticketId }: { ticketId: string }) {

@@ -7,6 +7,10 @@ export async function getTicketById(id: string) {
     where: { id },
     include: {
       messages: {
+        where: {
+          isActive: true,
+          sender: { isActive: true, isBlocked: false },
+        },
         orderBy: { createdAt: "asc" },
         include: {
           sender: {
@@ -26,6 +30,8 @@ export async function getTicketById(id: string) {
           role: true,
           name: true,
           image: true,
+          isActive: true,
+          isBlocked: true,
         }
       },
       buyer: true,

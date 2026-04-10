@@ -7,6 +7,10 @@ export default async function LoungePage() {
   const session = await auth();
 
   const rows = await prisma.loungeMessage.findMany({
+    where: {
+      isActive: true,
+      sender: { isActive: true, isBlocked: false },
+    },
     orderBy: { createdAt: "asc" },
     take: 200,
     include: {

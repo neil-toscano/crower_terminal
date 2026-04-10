@@ -64,3 +64,10 @@ export async function requireSessionUser(callbackUrl = "/") {
   }
   return user;
 }
+
+export async function getUserModerationState(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { isActive: true, isBlocked: true },
+  });
+}

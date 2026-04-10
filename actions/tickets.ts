@@ -26,11 +26,20 @@ export async function buyTicket(ticketId: string, formData: FormData): Promise<A
 
   const user = await requireSessionUser(callback);
 
+  const currentUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { isActive: true, isBlocked: true },
+  });
+  if (!currentUser || !currentUser.isActive || currentUser.isBlocked) {
+    return { ok: false, error: "Tu cuenta está bloqueada o desactivada." };
+  }
+
 
 
   const current = await prisma.ticket.findUnique({ where: { id: ticketId } });
 
   if (!current) return { ok: false, error: "No encontramos ese ticket." };
+  if (!current.isActive) return { ok: false, error: "Este ticket ya no está disponible." };
 
   if (current.status !== TicketStatus.AVAILABLE) {
 
@@ -116,6 +125,13 @@ export async function createTicket(formData: FormData): Promise<ActionResult> {
   const callback = String(formData.get("callbackUrl") ?? "").trim() || "/sell/new";
 
   const user = await requireSessionUser(callback);
+  const currentUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { isActive: true, isBlocked: true },
+  });
+  if (!currentUser || !currentUser.isActive || currentUser.isBlocked) {
+    return { ok: false, error: "Tu cuenta está bloqueada o desactivada." };
+  }
 
   const title = String(formData.get("title") ?? "").trim();
 
@@ -188,10 +204,17 @@ export async function createTicket(formData: FormData): Promise<ActionResult> {
 export async function finalizePurchase(ticketId: string, _formData?: FormData): Promise<ActionResult> {
 
   const user = await requireSessionUser(ticketPurchasePath(ticketId));
+  const currentUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { isActive: true, isBlocked: true },
+  });
+  if (!currentUser || !currentUser.isActive || currentUser.isBlocked) {
+    return { ok: false, error: "Tu cuenta está bloqueada o desactivada." };
+  }
 
   const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
 
-  if (!ticket || ticket.buyerId !== user.id) {
+  if (!ticket || !ticket.isActive || ticket.buyerId !== user.id) {
 
     return { ok: false, error: "No tienes permiso para finalizar esta compra." };
 
@@ -245,7 +268,7 @@ export async function adminTicketAction(
 
   ticketId: string,
 
-  action: "validate" | "release" | "forceFinalize" | "closeChat",
+  action: "validate" | "release" | "forceFinalize" | "closeChat" | "deactivate",
 
   _formData?: FormData,
 
@@ -293,6 +316,17 @@ export async function adminTicketAction(
 
   }
 
+  if (action === "deactivate") {
+    await prisma.ticket.update({
+      where: { id: ticketId },
+      data: { isActive: false },
+    });
+    await prisma.message.updateMany({
+      where: { ticketId, isActive: true },
+      data: { isActive: false },
+    });
+  }
+
 
 
   const label: Record<typeof action, string> = {
@@ -304,6 +338,7 @@ export async function adminTicketAction(
     forceFinalize: "Admin forced ticket COMPLETED.",
 
     closeChat: "Admin closed chat and reset ticket.",
+    deactivate: "Admin deactivated ticket (soft delete).",
 
   };
 
