@@ -6,6 +6,7 @@ import Link from "next/link";
 import { safeCallbackUrl } from "@/lib/callback-url";
 import { Button } from "@/components/ui/button";
 
+
 export function LoginForm({ initialCallbackUrl }: { initialCallbackUrl: string }) {
   const callbackUrl = safeCallbackUrl(initialCallbackUrl, "/");
 
@@ -13,7 +14,7 @@ export function LoginForm({ initialCallbackUrl }: { initialCallbackUrl: string }
     <div className="mx-auto w-full max-w-md space-y-6 rounded-3xl border border-zinc-800 bg-zinc-900/40 p-8 text-white backdrop-blur">
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Iniciar sesión</h1>
-        <p className="text-sm text-zinc-400">Usa tu cuenta de Google para comprar o vender tickets.</p>
+        <p className="text-sm text-zinc-400">Inicia sesión para comprar, chatear...etc</p>
       </div>
 
       <Button
@@ -21,6 +22,11 @@ export function LoginForm({ initialCallbackUrl }: { initialCallbackUrl: string }
         className="w-full cursor-pointer rounded-2xl bg-white py-6 text-base font-medium text-black hover:bg-zinc-100"
         onClick={() => signIn("google", { callbackUrl })}
       >
+        <img
+          src="https://hugeicons.com/assets/google-icon.svg"
+          alt="Google"
+          className="w-6 h-6"
+        />
         Continuar con Google
       </Button>
 

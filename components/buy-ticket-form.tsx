@@ -5,6 +5,7 @@ import { TicketStatus } from "@/app/generated/prisma/enums";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import {
   Dialog,
@@ -12,16 +13,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 
 export function BuyTicketForm({ ticketId, status }: { ticketId: string; status: TicketStatus }) {
   const router = useRouter();
+  const { data: session, status: sessionStatus } = useSession();
   const available = status === TicketStatus.AVAILABLE;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  function handleTriggerClick() {
+    console.log(session, 'sesion');
+    if (sessionStatus === "loading") return;
+    if (!session?.user) {
+      router.push(`/login?callbackUrl=/`);
+      return;
+    }
+    setOpen(true);
+  }
 
   async function handleConfirm() {
     setLoading(true);
@@ -44,40 +55,39 @@ export function BuyTicketForm({ ticketId, status }: { ticketId: string; status: 
   }
 
   return (
-    <Dialog open={open} onOpenChange={(val) => !loading && setOpen(val)}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          disabled={!available}
-          className="rounded-xl cursor-pointer bg-white px-3 py-2 text-xs text-black disabled:opacity-40"
-        >
-          ADQUIRIR
-        </button>
-      </DialogTrigger>
+    <>
+      <button
+        type="button"
+        disabled={!available}
+        onClick={handleTriggerClick}
+        className="rounded-xl cursor-pointer bg-white px-3 py-2 text-xs text-black disabled:opacity-40"
+      >
+        ADQUIRIR
+      </button>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>¿Seguro que deseas adquirir este ticket?</DialogTitle>
-        </DialogHeader>
+      <Dialog open={open} onOpenChange={(val) => !loading && setOpen(val)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Seguro que deseas adquirir este ticket?</DialogTitle>
+          </DialogHeader>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline" disabled={loading}>
-              Cancelar
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" disabled={loading}>Cancelar</Button>
+            </DialogClose>
+            <Button onClick={handleConfirm} disabled={loading}>
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Procesando...
+                </span>
+              ) : (
+                "Confirmar"
+              )}
             </Button>
-          </DialogClose>
-          <Button onClick={handleConfirm} disabled={loading}>
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Procesando...
-              </span>
-            ) : (
-              "Confirmar"
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

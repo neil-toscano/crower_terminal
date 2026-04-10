@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { TicketStatus } from "@/app/generated/prisma/enums";
 import { BuyTicketForm } from "@/components/buy-ticket-form";
+import { TicketStatusES } from "@/const";
 
 function badgeClass(status: TicketStatus) {
     if (status === TicketStatus.AVAILABLE) return "bg-emerald-500/20 text-emerald-300";
@@ -64,7 +65,7 @@ export default function TicketSearch({ tickets }: any) {
                         </div>
                         <div className="mb-3 text-lg font-medium">{ticket.title}</div>
                         <span className={`rounded-full px-3 py-1 text-xs ${badgeClass(ticket.status)}`}>
-                            {ticket.status}
+                            {TicketStatusES[ticket.status as TicketStatus]}
 
                             {ticket.status === TicketStatus.IN_PROGRESS && (
                                 <span className="absolute top-0 right-0 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-orange-500 animate-ping"></span>

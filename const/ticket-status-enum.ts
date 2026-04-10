@@ -5,7 +5,7 @@ enum TicketStatus {
 }
 
 export const TicketStatusES: Record<TicketStatus, string> = {
-    [TicketStatus.AVAILABLE]: "Disponible",
-    [TicketStatus.IN_PROGRESS]: "En progreso",
-    [TicketStatus.COMPLETED]: "Completado",
+    [TicketStatus.AVAILABLE]: "DISPONIBLE",
+    [TicketStatus.IN_PROGRESS]: "EN PROGRESO",
+    [TicketStatus.COMPLETED]: "FINALIZADO",
 };

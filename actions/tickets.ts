@@ -127,11 +127,11 @@ export async function createTicket(formData: FormData): Promise<ActionResult> {
     return { ok: false, error: "El título es demasiado corto (mín. 4 caracteres)." };
   }
 
-  if (title.length > 100) {
+  if (title.length > 120) {
     return { ok: false, error: "El título no puede superar los 100 caracteres." };
   }
 
-  if (description.length > 120) {
+  if (description.length > 180) {
     return { ok: false, error: "La descripción no puede superar los 120 caracteres." };
   }
 
