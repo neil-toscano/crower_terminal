@@ -82,6 +82,8 @@ function SidebarContent({
   const isAdmin = session?.user?.role === Role.ADMIN;
   const marketplaceActive = pathname === "/";
   const loungeActive = pathname === "/lounge";
+  const quienesSomosActive = pathname === "/quienes-somos";
+  const comoFuncionaActive = pathname === "/como-funciona";
 
   return (
     <>
@@ -106,6 +108,18 @@ function SidebarContent({
             1
           </span>
         </div>
+        <NavLink
+          href="/quienes-somos"
+          label="Quiénes somos"
+          active={quienesSomosActive}
+          onClick={onNavigate}
+        />
+        <NavLink
+          href="/como-funciona"
+          label="Cómo funciona"
+          active={comoFuncionaActive}
+          onClick={onNavigate}
+        />
       </nav>
 
       <div className="my-5 flex flex-col items-center">
